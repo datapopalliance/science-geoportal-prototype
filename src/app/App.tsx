@@ -8,7 +8,7 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(true);
   
   // App State
-  const [indicator, setIndicator] = useState("Increase in Forest Area");
+  const [indicator, setIndicator] = useState("Increase in Forest");
   const [geoLevel, setGeoLevel] = useState("National");
   const [countryRegion, setCountryRegion] = useState("Brazil");
   const [region, setRegion] = useState(""); 

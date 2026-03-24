@@ -94,7 +94,7 @@ export default function LeftPanel({
         <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 12 }}>
           <Label text="Indicator Name">
             <Select
-              options={["Increase in Forest Area", "Deforestation Rate", "Tree Cover Density"]}
+              options={["Increase in Forest"]}
               value={indicator}
               onChange={setIndicator}
             />
