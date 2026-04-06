@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Select, Button, Tabs, Chip, C, Card } from "./CalciteUI";
+import { Select, Button, Tabs, Chip, C, Card, InfoIcon, Tooltip, MetadataIcon } from "./CalciteUI";
 import { COUNTRY_REGIONS, REGION_COORDS } from "../data/geoData";
 
 interface MapViewPanelProps {
@@ -15,6 +15,8 @@ interface MapViewPanelProps {
   compareYear: number;
   displayMode: string;
   showForestOverlay: boolean;
+  onOpenMetadata?: () => void;
+  onOpenOnboarding?: () => void;
 }
 
 const MAPBOX_TOKEN = "pk.eyJ1IjoibWFyY2dhbGxpZmEiLCJhIjoiY20xaGoxbGxnMGc0YTJscXlyNGV3NXJuNCJ9.j5f27WxhEEozshZXamnAaQ";
@@ -67,7 +69,9 @@ export default function MapViewPanel({
   indicator, geoLevel, countryRegion, region,
   countryRegionCompare, regionCompare,
   year, compareYear, displayMode,
-  showForestOverlay
+  showForestOverlay,
+  onOpenMetadata,
+  onOpenOnboarding
 }: MapViewPanelProps) {
   const [activeTab, setActiveTab] = useState("Table");
   const mapContainerPrimary = useRef<HTMLDivElement>(null);
@@ -286,25 +290,45 @@ export default function MapViewPanel({
         <div style={{ fontSize: 11, color: C.text2, fontFamily: C.font, fontWeight: 600, marginRight: 4 }}>
           Viewing:
         </div>
-        <div style={{ fontSize: 11, fontWeight: 700, color: C.blue, background: C.blueLight, padding: "2px 6px", borderRadius: 4 }}>
-          {indicator} ({year})
+        <div style={{ fontSize: 11, fontWeight: 700, color: C.blue, background: C.blueLight, padding: "2px 8px", borderRadius: 4, display: "flex", alignItems: "center", gap: 6 }}>
+          {indicator} ({year}) 
+          <MetadataIcon 
+             tooltip="View indicator metadata and methodology" 
+             onClick={onOpenMetadata} 
+          />
         </div>
         
         <div style={{ color: C.text3, fontSize: 12 }}>—</div>
-        <div style={{ fontSize: 11, fontWeight: 600 }}>{displayMode === 'side' ? `Primary: ${countryRegion}${region ? ' ('+region+')' : ''}` : countryRegion}</div>
-        
         {displayMode === 'side' && (
            <>
             <div style={{ color: C.text3, fontSize: 12 }}>vs</div>
-            <div style={{ fontSize: 11, fontWeight: 600 }}>Compare: {countryRegionCompare}{regionCompare ? ' ('+regionCompare+')' : ''}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+              Compare: {countryRegionCompare}{regionCompare ? ' ('+regionCompare+')' : ''}
+              <Tooltip text="Comparison logic: Benchmarking two regions using the same methodology. Note: Variability in data availability or local time range adjustments may apply.">
+                 <div style={{ display: "flex", color: C.text3 }}><InfoIcon /></div>
+              </Tooltip>
+            </div>
            </>
         )}
-
+        
         <div style={{ flex: 1 }} />
-        <Chip color={showForestOverlay ? "green" : "neutral"}>
-            Overlay: {showForestOverlay ? "ON" : "OFF"}
-        </Chip>
-        <Button icon="filter" appearance="outline" scale="s">Layers</Button>
+        <Tooltip text="Toggle forest loss/gain layers">
+           <Chip color={showForestOverlay ? "green" : "neutral"}>
+               Overlay: {showForestOverlay ? "ON" : "OFF"}
+           </Chip>
+        </Tooltip>
+        
+        <Tooltip text="Adjust layer opacity and order">
+           <Button icon="filter" appearance="outline" scale="s">Layers</Button>
+        </Tooltip>
+
+        <div 
+          onClick={onOpenOnboarding}
+          title="Re-open Onboarding"
+          style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: C.bg, border: `1px solid ${C.border2}`, cursor: "pointer", color: C.text2, fontSize: 13, fontWeight: 700 }}
+        >
+          ?
+        </div>
       </div>
 
       {/* ── Map View Area ── */}

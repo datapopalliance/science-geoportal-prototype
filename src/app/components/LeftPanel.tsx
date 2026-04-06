@@ -1,4 +1,4 @@
-import { Block, Label, Select, Slider, SegmentedControl, Chip, Divider, Switch, C } from "./CalciteUI";
+import { Block, Label, Select, Slider, SegmentedControl, Chip, Divider, Switch, C, InfoIcon, Tooltip, ResetIcon } from "./CalciteUI";
 import { COUNTRY_REGIONS } from "../data/geoData";
 
 interface LeftPanelProps {
@@ -71,42 +71,50 @@ export default function LeftPanel({
       }}
     >
       {/* ── Header ── */}
-      <div style={{ padding: "8px 10px 12px", borderBottom: `1px solid ${C.border2}`, marginBottom: 10 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.text1 }}>GIS Analytics</div>
-        <div style={{ fontSize: 11, color: C.text3 }}>South America Forest Monitor</div>
+      <div style={{ padding: "8px 10px 12px", borderBottom: `1px solid ${C.border2}`, marginBottom: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+           <div style={{ fontSize: 14, fontWeight: 700, color: C.text1, letterSpacing: '-0.01em' }}>Geoportal</div>
+           <div style={{ fontSize: 11, color: C.text3, fontWeight: 500 }}>South America Forest Monitor</div>
+        </div>
+        <div style={{ display: "flex", gap: 6 }}>
+        </div>
       </div>
 
       {/* ── Block 1 — Layers ── */}
       <Block heading="Layers" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600 }}>Forest Area Overlay</div>
-              <div style={{ fontSize: 10, color: C.text3 }}>Display indicator data on map</div>
-            </div>
-            <Switch checked={showForestOverlay} onChange={setShowForestOverlay} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 12, fontWeight: 600 }}>Forest Area Overlay</div>
+            <div style={{ fontSize: 10, color: C.text3 }}>Display indicator data on map</div>
           </div>
+          <Switch checked={showForestOverlay} onChange={setShowForestOverlay} />
         </div>
       </Block>
 
       {/* ── Block 2 — Indicator ── */}
       <Block heading="Indicator" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Label text="Indicator Name">
             <Select
               options={["Increase in Forest"]}
               value={indicator}
               onChange={setIndicator}
             />
+            <div style={{ fontSize: 10, color: C.text3, marginTop: 4, display: "flex", alignItems: "center" }}>
+               Select the environmental indicator to visualize <InfoIcon tooltip="Updates map layers and analysis cards" />
+            </div>
           </Label>
         </div>
       </Block>
 
       {/* ── Block 3 — Geography ── */}
       <Block heading="Geography" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           <Label text="Geographic Level">
-            <Select options={["National", "Admin Level 1"]} value={geoLevel} onChange={setGeoLevel} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+               <Select options={["National", "Admin Level 1"]} value={geoLevel} onChange={setGeoLevel} />
+               <div style={{ fontSize: 10, color: C.text3 }}>Compare countries or sub-national regions <InfoIcon tooltip="Changes the granularity of spatial aggregation" /></div>
+            </div>
           </Label>
 
           <Divider />
@@ -155,7 +163,7 @@ export default function LeftPanel({
 
       {/* ── Block 4 — Time ── */}
       <Block heading="Time" defaultOpen>
-        <div style={{ padding: "10px 10px 4px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Label text="Primary Reference Year">
             <Slider min={2000} max={2025} value={year} ticks={[2000, 2010, 2020, 2025]} onChange={setYear} />
           </Label>
@@ -169,7 +177,7 @@ export default function LeftPanel({
 
       {/* ── Block 5 — Comparison Mode ── */}
       <Block heading="Comparison Mode" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Label text="Display Mode">
             <SegmentedControl
               options={[
@@ -180,6 +188,7 @@ export default function LeftPanel({
               value={displayMode}
               onChange={setDisplayMode}
             />
+            <div style={{ fontSize: 10, color: C.text3, marginTop: 4 }}>Compare multiple areas or periods side-by-side <InfoIcon tooltip="Switch between spatial and chart view" /></div>
           </Label>
         </div>
       </Block>

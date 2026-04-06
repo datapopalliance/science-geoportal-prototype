@@ -1,9 +1,10 @@
-import { Block, Card, Switch, Chip, Divider, C } from "./CalciteUI";
+import { Block, Card, Switch, Chip, Divider, C, MetadataIcon } from "./CalciteUI";
 
 interface RightPanelProps {
   countryRegion: string;
   region: string;
   indicator: string;
+  onOpenMetadata?: () => void;
 }
 
 // Mini line chart using SVG
@@ -101,7 +102,7 @@ function Delta({ value }: { value: number }) {
   );
 }
 
-export default function RightPanel({ countryRegion, region, indicator }: RightPanelProps) {
+export default function RightPanel({ countryRegion, region, indicator, onOpenMetadata }: RightPanelProps) {
   const title = region ? `${region}, ${countryRegion}` : countryRegion;
   
   // Mock trend data based on country name length or something stable
@@ -136,18 +137,30 @@ export default function RightPanel({ countryRegion, region, indicator }: RightPa
     >
       {/* ── Block 1 — Summary Card ── */}
       <Block heading="Summary Card" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Card>
-            <div style={{ textAlign: "center", marginBottom: 10 }}>
-              <div style={{ fontSize: 26, fontWeight: 700, color: delta >= 0 ? C.green : C.red, lineHeight: 1 }}>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -20, position: "relative", zIndex: 10 }}>
+               <div 
+                 onClick={onOpenMetadata}
+                 style={{ cursor: "pointer", padding: 4, color: C.blue, display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 700 }}
+               >
+                 <MetadataIcon />
+                 Details
+               </div>
+            </div>
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <div style={{ fontSize: 28, fontWeight: 700, color: delta >= 0 ? C.green : C.red, lineHeight: 1 }}>
                   {delta >= 0 ? '+' : ''}{latestVal.toFixed(1)}%
               </div>
-              <div style={{ fontSize: 10, color: C.text3, marginTop: 4, fontWeight: 500 }}>
-                  {indicator} · {title}
+              <div style={{ fontSize: 11, color: C.text3, marginTop: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                  {indicator}
+              </div>
+              <div style={{ fontSize: 13, color: C.text1, marginTop: 2, fontWeight: 500 }}>
+                  {title}
               </div>
             </div>
             <Divider />
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: 11, color: C.text2 }}>YoY Change</span>
                 <Delta value={delta} />
@@ -171,7 +184,7 @@ export default function RightPanel({ countryRegion, region, indicator }: RightPa
 
       {/* ── Block 2 — Trend ── */}
       <Block heading="Trend Analysis" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Card>
             <div style={{ fontSize: 11, fontWeight: 600, color: C.text1, marginBottom: 10 }}>
               Long-term Trend (2010–2025)
@@ -203,7 +216,7 @@ export default function RightPanel({ countryRegion, region, indicator }: RightPa
 
       {/* ── Block 3 — Spatial Comparison ── */}
       <Block heading="Peer Comparison" defaultOpen>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ fontSize: 11, color: C.text3, marginBottom: 4 }}>
             Relative to South American peers
           </div>
@@ -230,7 +243,7 @@ export default function RightPanel({ countryRegion, region, indicator }: RightPa
 
       {/* ── Block 4 — Metadata ── */}
       <Block heading="Metadata & Sources" defaultOpen={false}>
-        <div style={{ padding: "10px 10px", display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[
             ["Indicator", indicator],
             ["Context", title],
@@ -244,6 +257,28 @@ export default function RightPanel({ countryRegion, region, indicator }: RightPa
               <span style={{ fontSize: 10, color: C.text1, textAlign: "right" }}>{v}</span>
             </div>
           ))}
+        </div>
+        <Divider />
+        <div style={{ marginTop: 10 }}>
+           <button 
+             onClick={onOpenMetadata}
+             style={{ 
+               width: "100%", 
+               padding: "8px", 
+               fontSize: 11, 
+               fontWeight: 700, 
+               color: C.blue, 
+               background: C.blueLight, 
+               border: `1px solid ${C.blue}`, 
+               borderRadius: 6,
+               cursor: "pointer",
+               transition: 'all 0.2s'
+             }}
+             onMouseEnter={(e) => e.currentTarget.style.background = C.fg3}
+             onMouseLeave={(e) => e.currentTarget.style.background = C.blueLight}
+           >
+             View Full Metadata Sheet
+           </button>
         </div>
       </Block>
     </div>

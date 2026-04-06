@@ -2,28 +2,43 @@
 // These mimic Calcite components without web components/Shadow DOM so Figma can capture them.
 
 import { useState, ReactNode } from "react";
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "./ui/tooltip";
+
+export { TooltipProvider };
 
 // ── Tokens ──────────────────────────────────────────────────────────────────
 export const C = {
-  bg: "#f3f3f3",
-  fg1: "#ffffff",
-  fg2: "#f3f3f3",
-  fg3: "#eaeaea",
-  border1: "#cacaca",
-  border2: "#dfdfdf",
-  border3: "#f0f0f0",
-  text1: "#323232",
-  text2: "#6a6a6a",
-  text3: "#9a9a9a",
-  blue: "#007ac2",
-  blueDark: "#005e95",
-  blueLight: "#e8f4fb",
-  green: "#35ac46",
-  red: "#d83020",
-  orange: "#e07b00",
-  shadow: "0 1px 2px rgba(0,0,0,0.10)",
-  shadowMd: "0 2px 8px rgba(0,0,0,0.12)",
-  font: '"Avenir Next","Avenir",Helvetica,Arial,sans-serif',
+  bg: "#F7F6F1", // color.neutral.50
+  fg1: "#FFFFFF", // color.neutral.0
+  fg2: "#F7F6F1",
+  fg3: "#EEEEE8", // color.neutral.100
+  border1: "#B4B2A9", // color.neutral.300
+  border2: "#D2D0C6", // color.neutral.200
+  border3: "#EEEEE8",
+  text1: "#363830", // color.neutral.700
+  text2: "#4D5248", // color.neutral.600
+  text3: "#7A7D74", // color.neutral.400
+  blue: "#3B8135", // BRAND GREEN (primary)
+  blueDark: "#2D6A2E", // color.primary.600
+  blueLight: "#EFF6E6", // color.primary.50
+  green: "#3B8135",
+  red: "#C83D3D", // color.danger.400
+  orange: "#C47D1A", // color.warning.400
+  shadow: "0 1px 2px 0 rgba(14,34,18,0.06)", // elevation.1
+  shadowMd: "0 2px 8px 0 rgba(14,34,18,0.08)", // elevation.2
+  font: 'Inter, system-ui, sans-serif',
+  blueLight2: "#EAF2FA", // color.info.50
+  success: "#3B8135",
+  warning: "#C47D1A",
+  danger: "#C83D3D",
+  radius: 8, // borderRadius.md
+  radiusLg: 12, // borderRadius.lg
+  borderWidth: "0.5px", // borderWidth.hairline/default
 };
 
 // ── Block (collapsible section) ──────────────────────────────────────────────
@@ -32,11 +47,13 @@ export function Block({
   children,
   defaultOpen = true,
   className = "",
+  padding = "10px 12px",
 }: {
   heading: string;
   children: ReactNode;
   defaultOpen?: boolean;
   className?: string;
+  padding?: string;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
@@ -45,8 +62,8 @@ export function Block({
       style={{
         background: C.fg1,
         border: `1px solid ${C.border2}`,
-        borderRadius: 4,
-        marginBottom: 6,
+        borderRadius: C.radius,
+        marginBottom: 8,
         fontFamily: C.font,
       }}
     >
@@ -57,17 +74,20 @@ export function Block({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "8px 10px",
+          padding: "10px 12px",
           background: "none",
           border: "none",
           cursor: "pointer",
           fontFamily: C.font,
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: 600,
           color: C.text1,
           textAlign: "left",
-          borderBottom: open ? `1px solid ${C.border2}` : "none",
+          borderBottom: open ? `1px solid ${C.border3}` : "none",
+          transition: "background 0.2s",
         }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = C.fg3)}
+        onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
       >
         <span>{heading}</span>
         <svg
@@ -75,12 +95,12 @@ export function Block({
           height="12"
           viewBox="0 0 12 12"
           fill="none"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.15s", flexShrink: 0 }}
+          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", flexShrink: 0 }}
         >
           <path d="M2 4.5L6 8.5L10 4.5" stroke={C.text2} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      {open && <div>{children}</div>}
+      {open && <div style={{ padding }}>{children}</div>}
     </div>
   );
 }
@@ -120,12 +140,13 @@ export function Select({
         position: "relative",
         height: h,
         background: C.fg1,
-        border: `1px solid ${C.border1}`,
-        borderRadius: 3,
+        border: `1px solid ${C.border2}`,
+        borderRadius: 6,
         display: "flex",
         alignItems: "center",
         fontFamily: C.font,
         cursor: "pointer",
+        transition: "border-color 0.15s, box-shadow 0.15s",
       }}
       onClick={() => setOpen(!open)}
     >
@@ -159,8 +180,8 @@ export function Select({
             left: 0,
             right: 0,
             background: C.fg1,
-            border: `1px solid ${C.border1}`,
-            borderRadius: 3,
+            border: `1px solid ${C.border2}`,
+            borderRadius: 6,
             boxShadow: C.shadowMd,
             zIndex: 1000,
             maxHeight: 200,
@@ -231,10 +252,10 @@ export function Button({
         padding: `0 ${scale === "s" ? 8 : 12}px`,
         background: bg,
         border,
-        borderRadius: 3,
+        borderRadius: 6,
         fontFamily: C.font,
         fontSize: fs,
-        fontWeight: 500,
+        fontWeight: 600,
         color: fg,
         cursor: "pointer",
         width: width === "full" ? "100%" : undefined,
@@ -265,12 +286,15 @@ export function Button({
             <path d="M3 5.5L8 10.5L13 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           )}
           {icon === "reset" && (
-            <path d="M3 8a5 5 0 1 0 1.4-3.4M3 4v4h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8 2a6 6 0 1 1-4.24 1.76L5 5H1V1l1.76 1.76A8 8 0 1 0 8 0v2z" fill="currentColor" />
+          )}
+          {icon === "metadata" && (
+            <path d="M4 2h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 1v10h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z" fill="currentColor" />
           )}
           {icon === "information" && (
             <>
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.4" />
-              <path d="M8 7v5M8 5.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+              <path d="M8 7v4M8 5h.01" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </>
           )}
         </svg>
@@ -281,12 +305,13 @@ export function Button({
 }
 
 // ── Chip ─────────────────────────────────────────────────────────────────────
-export function Chip({ children, color = "blue" }: { children: ReactNode; color?: "blue" | "green" | "red" | "neutral" }) {
+export function Chip({ children, color = "blue" }: { children: ReactNode; color?: "blue" | "green" | "red" | "neutral" | "orange" }) {
   const map = {
-    blue: { bg: C.blueLight, text: C.blue, border: "#b3d9f0" },
-    green: { bg: "#e8f7ea", text: "#217a2f", border: "#b3e4bc" },
-    red: { bg: "#fce9e7", text: C.red, border: "#f0b8b3" },
-    neutral: { bg: C.fg3, text: C.text2, border: C.border2 },
+    blue: { bg: "#EAF2FA", text: "#1A4F8C", border: "#93BCDE" }, // Info
+    green: { bg: "#EFF6E6", text: "#2D6A2E", border: "#B6D49A" }, // Success
+    red: { bg: "#FDF0F0", text: "#8C1D1D", border: "#E89898" }, // Danger
+    orange: { bg: "#FDF4DC", text: "#7A4E0C", border: "#EABF6A" }, // Warning
+    neutral: { bg: "#EEEEE8", text: "#363830", border: "#D2D0C6" },
   };
   const s = map[color];
   return (
@@ -294,15 +319,16 @@ export function Chip({ children, color = "blue" }: { children: ReactNode; color?
       style={{
         display: "inline-flex",
         alignItems: "center",
-        padding: "2px 7px",
+        padding: "2px 10px",
         background: s.bg,
         border: `1px solid ${s.border}`,
-        borderRadius: 10,
+        borderRadius: 999,
         fontFamily: C.font,
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: 600,
         color: s.text,
-        letterSpacing: "0.01em",
+        letterSpacing: "0.02em",
+        textTransform: "uppercase",
       }}
     >
       {children}
@@ -358,10 +384,11 @@ export function SegmentedControl({
       style={{
         display: "flex",
         background: C.fg3,
-        border: `1px solid ${C.border1}`,
-        borderRadius: 3,
+        border: `1px solid ${C.border2}`,
+        borderRadius: 6,
         overflow: "hidden",
         fontFamily: C.font,
+        padding: 2,
       }}
     >
       {options.map((opt, i) => {
@@ -371,16 +398,17 @@ export function SegmentedControl({
             key={opt.value}
             style={{
               flex: 1,
-              padding: "5px 8px",
+              padding: "6px 8px",
               textAlign: "center",
               fontSize: 11,
-              fontWeight: active ? 600 : 400,
-              color: active ? C.blue : C.text2,
+              fontWeight: 600,
+              color: active ? C.text1 : C.text3,
               background: active ? C.fg1 : "transparent",
-              borderRight: i < options.length - 1 ? `1px solid ${C.border1}` : "none",
+              borderRadius: active ? 4 : 0,
               cursor: "pointer",
-              boxShadow: active ? C.shadow : "none",
+              boxShadow: active ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
               userSelect: "none",
+              transition: "all 0.15s",
             }}
             onClick={() => onChange?.(opt.value)}
           >
@@ -552,10 +580,10 @@ export function Card({ children, className }: { children: ReactNode; className?:
       className={className}
       style={{
         background: C.fg1,
-        border: `1px solid ${C.border2}`,
-        borderRadius: 4,
+        border: `${C.borderWidth || '0.5px'} solid ${C.border2}`,
+        borderRadius: C.radiusLg,
         boxShadow: C.shadow,
-        padding: "10px 12px",
+        padding: "16px",
         fontFamily: C.font,
       }}
     >
@@ -619,5 +647,252 @@ export function Badge({ children }: { children: ReactNode }) {
     >
       {children}
     </span>
+  );
+}
+
+// ── Tooltip ─────────────────────────────────────────────────────────────────
+export function Tooltip({ text, children }: { text: string; children: ReactNode }) {
+  return (
+    <RadixTooltip>
+      <TooltipTrigger asChild>
+        {children}
+      </TooltipTrigger>
+      <TooltipContent 
+        side="top" 
+        sideOffset={8}
+        className="bg-[#363830] text-white border-none shadow-lg px-2.5 py-1.5 text-[11px] font-medium z-[10000]"
+      >
+        {text}
+      </TooltipContent>
+    </RadixTooltip>
+  );
+}
+
+// ── InfoIcon ────────────────────────────────────────────────────────────────
+export function InfoIcon({ tooltip }: { tooltip?: string }) {
+  const icon = (
+    <div style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", color: C.text3, marginLeft: 4, verticalAlign: "middle", marginTop: -1 }}>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M8 7v4M8 5h.01" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    </div>
+  );
+  return tooltip ? <Tooltip text={tooltip}>{icon}</Tooltip> : icon;
+}
+
+export function MetadataIcon({ tooltip, onClick }: { tooltip?: string; onClick?: () => void }) {
+  const icon = (
+    <div 
+      onClick={onClick}
+      style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", color: C.blue, verticalAlign: "middle" }}
+    >
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4 2h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm0 1v10h8V3H4zm1 2h6v1H5V5zm0 2h6v1H5V7zm0 2h4v1H5V9z" />
+      </svg>
+    </div>
+  );
+  return tooltip ? <Tooltip text={tooltip}>{icon}</Tooltip> : icon;
+}
+
+export function ResetIcon({ tooltip, onClick }: { tooltip?: string; onClick?: () => void }) {
+  const icon = (
+    <div 
+      onClick={onClick}
+      style={{ display: "inline-flex", alignItems: "center", cursor: "pointer", color: C.text3, verticalAlign: "middle" }}
+    >
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 2a6 6 0 1 1-4.24 1.76L5 5H1V1l1.76 1.76A8 8 0 1 0 8 0v2z" />
+      </svg>
+    </div>
+  );
+  return tooltip ? <Tooltip text={tooltip}>{icon}</Tooltip> : icon;
+}
+
+// ── Modal / Onboarding Card ─────────────────────────────────────────────────
+export function Modal({
+  title,
+  purpose,
+  steps,
+  onDismiss,
+  onNeverShowAgain,
+}: {
+  title: string;
+  purpose: string;
+  steps: string[];
+  onDismiss: () => void;
+  onNeverShowAgain?: () => void;
+}) {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0,0,0,0.4)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 5000,
+        backdropFilter: "blur(2px)",
+      }}
+      onClick={onDismiss}
+    >
+      <div
+        style={{
+          width: 420,
+          background: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 12px 32px rgba(14,34,18,0.20)",
+          padding: 28,
+          position: "relative",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onDismiss}
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+            border: "none",
+            background: "none",
+            cursor: "pointer",
+            color: C.text3,
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        <div style={{ fontSize: 20, fontWeight: 700, color: C.text1, marginBottom: 8 }}>{title}</div>
+        <div style={{ fontSize: 13, color: C.text2, marginBottom: 20, lineHeight: 1.5 }}>{purpose}</div>
+
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: C.text3, textTransform: "uppercase", marginBottom: 10 }}>
+            How to start
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {steps.map((step, i) => (
+              <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: "50%",
+                    background: C.blueLight,
+                    color: C.blue,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {i + 1}
+                </div>
+                <div style={{ fontSize: 13, color: C.text1 }}>{step}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{ fontSize: 12, color: C.text3, cursor: "pointer", textDecoration: "underline" }}
+            onClick={onNeverShowAgain}
+          >
+            Don't show again
+          </div>
+          <button
+            onClick={onDismiss}
+            style={{
+              padding: "8px 20px",
+              background: C.blue,
+              color: "#fff",
+              border: "none",
+              borderRadius: 4,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── SlidePanel ───────────────────────────────────────────────────────────────
+export function SlidePanel({
+  title,
+  isOpen,
+  onClose,
+  children,
+  width = 350,
+}: {
+  title: string;
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  width?: number;
+}) {
+  return (
+    <>
+      {isOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.1)",
+            zIndex: 4000,
+          }}
+          onClick={onClose}
+        />
+      )}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          right: isOpen ? 0 : -width,
+          width,
+          height: "100vh",
+          background: "#fff",
+          boxShadow: "-4px 0 12px rgba(0,0,0,0.1)",
+          zIndex: 4001,
+          transition: "right 0.3s ease-out",
+          display: "flex",
+          flexDirection: "column",
+          fontFamily: C.font,
+        }}
+      >
+        <div
+          style={{
+            padding: "16px 20px",
+            borderBottom: `1px solid ${C.border2}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ fontSize: 16, fontWeight: 700, color: C.text1 }}>{title}</div>
+          <button onClick={onClose} style={{ border: "none", background: "none", cursor: "pointer", color: C.text3 }}>
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>{children}</div>
+      </div>
+    </>
   );
 }
